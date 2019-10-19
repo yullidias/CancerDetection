@@ -13,18 +13,20 @@ def readJson(path):
     with open(path, 'r') as f:
         return json.loads(f.read())
     
-def createImageToDecisionTree(cancerDeMamaDF, nome_classe, criterio='entropy'):
+def createImageToDecisionTree(cancerDeMamaDF, nome_classe, atributosParaRemover=None,criterio='entropy'):
+    if atributosParaRemover != None:
+        cancerDeMamaDF = cancerDeMamaDF.drop(axis=1, labels=atributosParaRemover)
+    
     atributos = list(cancerDeMamaDF.columns)
     atributos.remove(nome_classe)
 
-    ml_methods_params = [DecisionTreeClassifier(criterion=criterio,min_samples_split=0.0002,random_state=1),
-                         DecisionTreeClassifier(criterion=criterio,min_samples_split=0.25,random_state=1),
-                         DecisionTreeClassifier(criterion=criterio,min_samples_split=0.5,random_state=1)]
+    ml_methods_params = [DecisionTreeClassifier(criterion=criterio,min_samples_split=0.0002,random_state=1)]#,
+                         #DecisionTreeClassifier(criterion=criterio,min_samples_split=0.25,random_state=1),
+                         #DecisionTreeClassifier(criterion=criterio,min_samples_split=0.5,random_state=1)]
 
     folds = readJson('folds-tree.txt')   
     for arvore in ml_methods_params:
-        for fold in folds:
-            dataset = cancerDeMamaDF.loc[folds[fold]['treino']]
-            arvore.fit(dataset.drop(axis=1, labels=nome_classe), dataset[nome_classe])
-            plotArvoreDeDecisao(arvore, cancerDeMamaDF[atributos], cancerDeMamaDF[nome_classe],
-                                f'img/arvore_{arvore.min_samples_split}_fold-{fold}.png')
+        dataset = cancerDeMamaDF.loc[folds["1"]['treino']] #foi escolhido um fold por simplificação
+        arvore.fit(dataset.drop(axis=1, labels=nome_classe), dataset[nome_classe])
+        plotArvoreDeDecisao(arvore, cancerDeMamaDF[atributos], cancerDeMamaDF[nome_classe],
+                            f'img/arvore_{arvore.min_samples_split}_removido-{atributosParaRemover}.png')
