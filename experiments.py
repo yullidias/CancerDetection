@@ -59,8 +59,8 @@ def gridsearch_tree(X, y):
     """
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-    parameters = {'kernel': ['linear', 'rbf'], 'C': [1, 10, 100, 1000]}
-    model = svm.SVC(gamma="scale")
+    parameters = {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]}
+    model = DecisionTreeClassifier()
     clf = GridSearchCV(model, parameters, cv=5)
 
     clf.fit(X_train, y_train)
@@ -69,10 +69,10 @@ def gridsearch_tree(X, y):
 
     y_pred = clf.best_estimator_.predict(X_test)
 
-    print("\nclassification_report:")
+    print("\nclassification_report:\n")
     print(md_classification_report(y_test, y_pred))
  
-    print("\nconfusion matrix:")
+    print("\nconfusion matrix:\n")
     print(md_confusion_matrix(y_test, y_pred))
 
 def gridsearch_svm(X, y):
@@ -92,10 +92,10 @@ def gridsearch_svm(X, y):
 
     y_pred = clf.best_estimator_.predict(X_test)
 
-    print("\nclassification_report:")
+    print("\nclassification_report:\n")
     print(md_classification_report(y_test, y_pred))
  
-    print("\nconfusion matrix:")
+    print("\nconfusion matrix:\n")
     print(md_confusion_matrix(y_test, y_pred))
 
 def gridsearch_svm_tree_knn(X, y):
@@ -120,6 +120,13 @@ def gridsearch_svm_tree_knn(X, y):
     helper.fit(X, y, scoring='f1', cv=KFold(n_splits=10, random_state=0))
     return helper.score_summary()
 
+from sklearn.feature_selection import mutual_info_classif
+
+def mutual_entopy(X, y):
+    mi = mutual_info_classif(X, y, discrete_features='auto', n_neighbors=3, copy=True, random_state=None)
+    result = pd.DataFrame([mi], columns = X.columns).T.sort_values(by=0).T
+    print(md_table(result))
+
 if __name__ == "__main__":
 
     datasetDF = readDataset('id')
@@ -128,13 +135,15 @@ if __name__ == "__main__":
     X, y = datasetDF.drop(CLASSE, axis=1), datasetDF[CLASSE]
 
     # decision_tree_images(datasetDF, CLASSE)
-    
-    print("Experimento gridsearch tree, comparação de atributos")
-    compare_grid_search_tree(datasetDF, CLASSE)
+    print("Cálculo da entropia de cada atributo em relação à feature")
+    mutual_entopy(X, y)
 
-    print("Experimento gridsearch svm")
-    #gridsearch_svm(X, y)
+    # print("Experimento gridsearch tree, comparação de atributos")
+    # compare_grid_search_tree(datasetDF, CLASSE)
 
-    print("Experimento grid search svm, decision tree e knn")
-    #gridsearch_svm_tree_knn(X, y)
+    # print("Experimento gridsearch svm")
+    # gridsearch_svm(X, y)
+
+    # print("Experimento grid search svm, decision tree e knn")
+    # gridsearch_svm_tree_knn(X, y)
 
