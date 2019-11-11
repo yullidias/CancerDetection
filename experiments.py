@@ -103,15 +103,13 @@ def gridsearch_svm_tree_knn(X, y):
     Experiment which consists on applying gridsearch to find and evaluate the best of three estimator.
     The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
     """
-    models = { 
-        'SVC': SVC(),
+    models = {         
         'LinearSVC': LinearSVC(),
         'DecisionTreeClassifier': DecisionTreeClassifier(),
         'KNeighborsClassifier': KNeighborsClassifier()
     }
 
-    params = { 
-        'SVC': {'C':[0.5, 2, 8], 'gamma':[0.5, 2, 8]},
+    params = {         
         'LinearSVC': {'C':[0.5, 2, 8, 32]},
         'DecisionTreeClassifier': {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]},
         'KNeighborsClassifier': {'n_neighbors':[2**2,2**4,2**6, 2**8]}

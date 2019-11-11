@@ -111,7 +111,7 @@ class EstimatorSelectionHelper:
             grid_search.fit(X, y)
             self.grid_searches[key] = grid_search
         print('Done.')
-    
+
     def score_summary(self, sort_by='mean_test_score'):
         frames = []
         for name, grid_search in self.grid_searches.items():
@@ -127,3 +127,20 @@ class EstimatorSelectionHelper:
         
         new_columns_order = ['estimator'] + [col for col in df if col not in ['estimator']]
         return df[new_columns_order]
+    
+    def get_bests():
+        for model in self.grid_searches:
+            yield model.best()
+            
+    def election(X):
+        y_pred_for_model = []
+        result = []
+        for best in get_bests():
+            predicted = best.predict(X)
+            y_pred_for_model.append(predicted)
+        for j in range(len(y_pred_for_model[0])):
+            sum_predicted = 0
+            for i in range(len(y_pred_for_model)):
+                sum_predicted += y_pred_for_model[i][j]
+            result.append(round(sum_predicted/float(len(y_pred_for_model))))
+        return result
