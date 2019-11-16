@@ -131,8 +131,6 @@ class EstimatorSelectionHelper:
     def get_bests(self):
         bests = []
         for model in self.grid_searches:
-            print(self.grid_searches[model])
-            print()
             bests.append(self.grid_searches[model].best_estimator_)
         print(bests)
         return bests
