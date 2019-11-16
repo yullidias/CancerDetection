@@ -3,20 +3,14 @@ import json
 from sklearn.tree import DecisionTreeClassifier
 #from arvoreDeDecisao import *
 
-def readDataset(index):
-    return pd \
-            .read_csv(open('pathToDataset.txt', 'r') \
-            .read().split("\n")[0], index_col=index) \
-            .drop(axis=1, labels='Unnamed: 32')
-
 def readJson(path):
     with open(path, 'r') as f:
         return json.loads(f.read())
-    
+
 def createImageToDecisionTree(cancerDeMamaDF, nome_classe, atributosParaRemover=None,criterio='entropy'):
     if atributosParaRemover != None:
         cancerDeMamaDF = cancerDeMamaDF.drop(axis=1, labels=atributosParaRemover)
-    
+
     atributos = list(cancerDeMamaDF.columns)
     atributos.remove(nome_classe)
 
@@ -24,7 +18,7 @@ def createImageToDecisionTree(cancerDeMamaDF, nome_classe, atributosParaRemover=
                          #DecisionTreeClassifier(criterion=criterio,min_samples_split=0.25,random_state=1),
                          #DecisionTreeClassifier(criterion=criterio,min_samples_split=0.5,random_state=1)]
 
-    folds = readJson('folds-tree.txt')   
+    folds = readJson('folds-tree.txt')
     for arvore in ml_methods_params:
         dataset = cancerDeMamaDF.loc[folds["1"]['treino']] #foi escolhido um fold por simplificação
         arvore.fit(dataset.drop(axis=1, labels=nome_classe), dataset[nome_classe])
@@ -95,13 +89,13 @@ class EstimatorSelectionHelper:
     from https://github.com/davidsbatista/machine-learning-notebooks/blob/master/hyperparameter-across-models.ipynb
     adapted from: http://www.codiply.com/blog/hyperparameter-grid-search-across-multiple-models-in-scikit-learn/
     """
-  
+
     def __init__(self, models, params):
         self.models = models
         self.params = params
         self.keys = models.keys()
         self.grid_searches = {}
-    
+
     def fit(self, X, y, **grid_kwargs):
         for key in self.keys:
             print('Running GridSearchCV for %s.' % key)
@@ -120,18 +114,18 @@ class EstimatorSelectionHelper:
             frame['estimator'] = len(frame)*[name]
             frames.append(frame)
         df = pd.concat(frames)
-        
+
         df = df.sort_values([sort_by], ascending=False)
         df = df.reset_index()
         df = df.drop(['rank_test_score', 'index'], 1)
-        
+
         new_columns_order = ['estimator'] + [col for col in df if col not in ['estimator']]
         return df[new_columns_order]
-    
+
     def get_bests():
         for model in self.grid_searches:
             yield model.best()
-            
+
     def election(X):
         y_pred_for_model = []
         result = []
