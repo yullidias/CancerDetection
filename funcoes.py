@@ -122,14 +122,16 @@ class EstimatorSelectionHelper:
         new_columns_order = ['estimator'] + [col for col in df if col not in ['estimator']]
         return df[new_columns_order]
 
-    def get_bests():
+    def get_bests(self):
+        bests = []
         for model in self.grid_searches:
-            yield model.best()
+            bests.append(self.grid_searches[model].best_estimator_)
+        return bests
 
-    def election(X):
+    def election(self,X):
         y_pred_for_model = []
         result = []
-        for best in get_bests():
+        for best in self.get_bests():
             predicted = best.predict(X)
             y_pred_for_model.append(predicted)
         for j in range(len(y_pred_for_model[0])):
