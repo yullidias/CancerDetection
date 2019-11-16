@@ -1,4 +1,3 @@
-
 from sklearn.svm import SVC, LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -7,141 +6,148 @@ from sklearn import svm, datasets
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.feature_selection import mutual_info_classif
 
 from funcoes import *
 from constantes import *
 
-def decision_tree_images(datasetDF, target):
-    createImageToDecisionTree(datasetDF, target) #sem remoção de atributos
+class Experiments():
+    def __init__(self, dataDF):
+        self.datasetDF = dataDF
+        self.datasetDF.replace('B', 0, inplace=True)
+        self.datasetDF.replace('M', 1, inplace=True)
+        self.X, self.y = self.datasetDF.drop(CLASSE, axis=1), self.datasetDF[CLASSE]
 
-    createImageToDecisionTree(datasetDF, target, 'concavity_mean')
-    createImageToDecisionTree(datasetDF, target, 'concave points_mean')
-    createImageToDecisionTree(datasetDF, target, 'concavity_worst')
+    def decision_tree_images(self):
+        createImageToDecisionTree(self.datasetDF, CLASSE) #sem remoção de atributos
 
-    #todas apresentaram diferenças
-    createImageToDecisionTree(datasetDF, target, 'concavity_worst')
-    createImageToDecisionTree(datasetDF, target, 'concavity_mean')
-    createImageToDecisionTree(datasetDF, target, 'compactness_worst')
-    createImageToDecisionTree(datasetDF, target, 'concave points_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'concavity_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'concave points_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'concavity_worst')
 
-    createImageToDecisionTree(datasetDF, target, 'area_worst')
-    createImageToDecisionTree(datasetDF, target, 'radius_mean')
-    createImageToDecisionTree(datasetDF, target, 'perimeter_mean')
-    createImageToDecisionTree(datasetDF, target, 'area_mean')
-    createImageToDecisionTree(datasetDF, target, 'radius_worst')
-    createImageToDecisionTree(datasetDF, target, 'perimeter_worst')
+        #todas apresentaram diferenças
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'concavity_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'concavity_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'compactness_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'concave points_worst')
 
-    createImageToDecisionTree(datasetDF, target, 'perimeter_worst')
-    createImageToDecisionTree(datasetDF, target, 'radius_mean')
-    createImageToDecisionTree(datasetDF, target, 'perimeter_mean')
-    createImageToDecisionTree(datasetDF, target, 'area_mean')
-    createImageToDecisionTree(datasetDF, target, 'radius_worst')
-    createImageToDecisionTree(datasetDF, target, 'area_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'area_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'radius_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'perimeter_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'area_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'radius_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'perimeter_worst')
 
-    createImageToDecisionTree(datasetDF, target, 'area_se')
-    createImageToDecisionTree(datasetDF, target, 'radius_se')
-    createImageToDecisionTree(datasetDF, target, 'perimeter_se')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'perimeter_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'radius_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'perimeter_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'area_mean')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'radius_worst')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'area_worst')
 
-def compare_grid_search_tree(dataframe, target):
-    X, y = datasetDF.drop(target, axis=1), datasetDF[target]
-    print(" Com todos os atributos")
-    gridsearch_tree(X, y)
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'area_se')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'radius_se')
+        createImageToDecisionTree(self.datasetDF, CLASSE, 'perimeter_se')
 
-    print("\nSem alguns atributos")
-    df2 = dataframe.drop(columns=['concavity_mean','concave points_mean','area_mean','perimeter_mean','perimeter_se','perimeter_se'])
-    X, y = df2.drop(target, axis=1), df2[target]
-    gridsearch_tree(X, y)
+    def compare_grid_search_tree(self):
+        self.X, self.y = self.datasetDF.drop(CLASSE, axis=1), self.datasetDF[CLASSE]
+        print(" Com todos os atributos")
+        gridsearch_tree(self.X, self.y)
 
-def gridsearch_tree(X, y):
-    """
-    Experiment which consists on applying gridsearch to find and evaluate the best decision tree estimator.
-    The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
-    """
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+        print("\nSem alguns atributos")
+        df2 = dataframe.drop(columns=['concavity_mean','concave points_mean','area_mean','perimeter_mean','perimeter_se','perimeter_se'])
+        self.X, self.y = df2.drop(CLASSE, axis=1), df2[CLASSE]
+        gridsearch_tree(self.X, self.y)
 
-    parameters = {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]}
-    model = DecisionTreeClassifier()
-    clf = GridSearchCV(model, parameters, cv=5)
+    def gridsearch_tree(selfself):
+        """
+        Experiment which consists on applying gridsearch to find and evaluate the best decision tree estimator.
+        The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
+        """
+        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=0.2, random_state=0)
 
-    clf.fit(X_train, y_train)
+        parameters = {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]}
+        model = DecisionTreeClassifier()
+        clf = GridSearchCV(model, parameters, cv=5)
 
-    print(f"best parameters: \n{clf.best_params_}")
+        clf.fit(X_train, y_train)
 
-    y_pred = clf.best_estimator_.predict(X_test)
+        print(f"best parameters: \n{clf.best_params_}")
 
-    print("\nclassification_report:\n")
-    print(md_classification_report(y_test, y_pred))
- 
-    print("\nconfusion matrix:\n")
-    print(md_confusion_matrix(y_test, y_pred))
+        y_pred = clf.best_estimator_.predict(X_test)
 
-def gridsearch_svm(X, y):
-    """
-    Experiment which consists on applying gridsearch to find and evaluate the best SVM estimator.
-    The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
-    """
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+        print("\nclassification_report:\n")
+        print(md_classification_report(y_test, y_pred))
 
-    parameters = {'kernel': ['linear', 'rbf'], 'C': [1, 10, 100, 1000]}
-    model = svm.SVC(gamma="scale")
-    clf = GridSearchCV(model, parameters, cv=5)
+        print("\nconfusion matrix:\n")
+        print(md_confusion_matrix(y_test, y_pred))
 
-    clf.fit(X_train, y_train)
+    def gridsearch_svm(self):
+        """
+        Experiment which consists on applying gridsearch to find and evaluate the best SVM estimator.
+        The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
+        """
+        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=0.2, random_state=0)
 
-    print(f"best parameters: \n{clf.best_params_}")
+        parameters = {'kernel': ['linear', 'rbf'], 'C': [1, 10, 100, 1000]}
+        model = svm.SVC(gamma="scale")
+        clf = GridSearchCV(model, parameters, cv=5)
 
-    y_pred = clf.best_estimator_.predict(X_test)
+        clf.fit(X_train, y_train)
 
-    print("\nclassification_report:\n")
-    print(md_classification_report(y_test, y_pred))
- 
-    print("\nconfusion matrix:\n")
-    print(md_confusion_matrix(y_test, y_pred))
+        print(f"best parameters: \n{clf.best_params_}")
 
-def gridsearch_svm_tree_knn(X, y):
-    """
-    Experiment which consists on applying gridsearch to find and evaluate the best of three estimator.
-    The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
-    """
-    models = {         
-        'LinearSVC': LinearSVC(),
-        'DecisionTreeClassifier': DecisionTreeClassifier(),
-        'KNeighborsClassifier': KNeighborsClassifier()
-    }
+        y_pred = clf.best_estimator_.predict(X_test)
 
-    params = {         
-        'LinearSVC': {'C':[0.5, 2, 8, 32]},
-        'DecisionTreeClassifier': {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]},
-        'KNeighborsClassifier': {'n_neighbors':[2**2,2**4,2**6, 2**8]}
-    }
-    helper = EstimatorSelectionHelper(models, params)
-    helper.fit(X, y, scoring='f1', cv=KFold(n_splits=10, random_state=0))
-    return helper.score_summary()
+        print("\nclassification_report:\n")
+        print(md_classification_report(y_test, y_pred))
 
-from sklearn.feature_selection import mutual_info_classif
+        print("\nconfusion matrix:\n")
+        print(md_confusion_matrix(y_test, y_pred))
 
-def mutual_entopy(X, y):
-    mi = mutual_info_classif(X, y, discrete_features='auto', n_neighbors=3, copy=True, random_state=None)
-    result = pd.DataFrame([mi], columns = X.columns).T.sort_values(by=0).T
-    print(md_table(result))
+    def gridsearch_svm_tree_knn(self):
+        """
+        Experiment which consists on applying gridsearch to find and evaluate the best of three estimator.
+        The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
+        """
+        models = {
+            'LinearSVC': LinearSVC(),
+            'DecisionTreeClassifier': DecisionTreeClassifier(),
+            'KNeighborsClassifier': KNeighborsClassifier()
+        }
 
-if __name__ == "__main__":
+        params = {
+            'LinearSVC': {'C':[0.5, 2, 8, 32]},
+            'DecisionTreeClassifier': {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]},
+            'KNeighborsClassifier': {'n_neighbors':[2**2,2**4,2**6, 2**8]}
+        }
+        helper = EstimatorSelectionHelper(models, params)
+        helper.fit(self.X, self.y, scoring='f1', cv=KFold(n_splits=10, random_state=0))
+        return helper.score_summary()
 
-    datasetDF = readDataset('id')
-    datasetDF.replace('B', 0, inplace=True)
-    datasetDF.replace('M', 1, inplace=True)
-    X, y = datasetDF.drop(CLASSE, axis=1), datasetDF[CLASSE]
 
-    # decision_tree_images(datasetDF, CLASSE)
-    print("Cálculo da entropia de cada atributo em relação à feature")
-    mutual_entopy(X, y)
+    def mutual_entopy(self):
+        mi = mutual_info_classif(self.X, self.y, discrete_features='auto', n_neighbors=3, copy=True, random_state=None)
+        result = pd.DataFrame([mi], columns = self.X.columns).T.sort_values(by=0).T
+    #     print(md_table(result))
+        return result
 
-    # print("Experimento gridsearch tree, comparação de atributos")
-    # compare_grid_search_tree(datasetDF, CLASSE)
-
-    # print("Experimento gridsearch svm")
-    # gridsearch_svm(X, y)
-
-    # print("Experimento grid search svm, decision tree e knn")
-    # gridsearch_svm_tree_knn(X, y)
-
+# if __name__ == "__main__":
+#
+#     datasetDF = readDataset('id')
+#     datasetDF.replace('B', 0, inplace=True)
+#     datasetDF.replace('M', 1, inplace=True)
+#     X, y = datasetDF.drop(CLASSE, axis=1), datasetDF[CLASSE]
+#
+#     # decision_tree_images(datasetDF, CLASSE)
+#     print("Cálculo da entropia de cada atributo em relação à feature")
+#     mutual_entopy(X, y)
+#
+#     # print("Experimento gridsearch tree, comparação de atributos")
+#     # compare_grid_search_tree(datasetDF, CLASSE)
+#
+#     # print("Experimento gridsearch svm")
+#     # gridsearch_svm(X, y)
+#
+#     # print("Experimento grid search svm, decision tree e knn")
+#     # gridsearch_svm_tree_knn(X, y)
