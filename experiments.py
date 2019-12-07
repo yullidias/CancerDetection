@@ -61,7 +61,7 @@ def gridsearch_tree(X, y):
     """
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-    parameters = {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]}
+    parameters = {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [0]}
     model = DecisionTreeClassifier()
     clf = GridSearchCV(model, parameters, cv=5)
 
@@ -113,7 +113,7 @@ def gridsearch_svm_tree_knn(X, y):
 
     params = {
         'LinearSVC': {'C':[0.5, 2, 8, 32]},
-        'DecisionTreeClassifier': {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]},
+        'DecisionTreeClassifier': {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [0]},
         'KNeighborsClassifier': {'n_neighbors':[2**2,2**4,2**6, 2**8]}
     }
     helper = EstimatorSelectionHelper(models, params)
