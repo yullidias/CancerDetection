@@ -59,9 +59,9 @@ def gridsearch_tree(X, y):
     Experiment which consists on applying gridsearch to find and evaluate the best decision tree estimator.
     The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
     """
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
-    parameters = {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [0]}
+    parameters = {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]}
     model = DecisionTreeClassifier()
     clf = GridSearchCV(model, parameters, cv=5)
 
@@ -82,7 +82,7 @@ def gridsearch_svm(X, y):
     Experiment which consists on applying gridsearch to find and evaluate the best SVM estimator.
     The results are the parameters, the classification report and the confusion matrix, and they are printed on the console.
     """
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
     parameters = {'kernel': ['linear', 'rbf'], 'C': [1, 10, 100, 1000]}
     model = svm.SVC(gamma="scale")
@@ -113,11 +113,11 @@ def gridsearch_svm_tree_knn(X, y):
 
     params = {
         'LinearSVC': {'C':[0.5, 2, 8, 32]},
-        'DecisionTreeClassifier': {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [0]},
+        'DecisionTreeClassifier': {'min_samples_split': [0.0002, 0.25, 0.5], 'random_state': [1]},
         'KNeighborsClassifier': {'n_neighbors':[2**2,2**4,2**6, 2**8]}
     }
     helper = EstimatorSelectionHelper(models, params)
-    helper.fit(X, y, scoring='f1', cv=KFold(n_splits=10, random_state=0))
+    helper.fit(X, y, scoring='f1', cv=KFold(n_splits=10, random_state=1))
 #     print(md_table(helper.score_summary().sort_values('estimator')[['estimator', 'params', 'mean_fit_time',
 #                                                                 'std_fit_time', 'mean_score_time',
 #                                                                 'std_score_time',  'split0_test_score',
@@ -140,7 +140,7 @@ def mutual_entopy(X, y):
 
 def meta_aprendizado(helper, X, y):
     print("Meta Aprendizado")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
     y_pred = helper.election(X_test)
 
     print("\nclassification_report:\n")
